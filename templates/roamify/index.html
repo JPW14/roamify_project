@@ -15,5 +15,15 @@
         <div>
             Explore travel destinations shared by our community <br />
         </div>
+        
+    {% if user.is_authenticated %}
+        <p>Hello, {{ user.username }}!</p>
+        <a href="{% url 'roamify:logout' %}">Logout</a>
+    {% else %}
+        <p>You are not logged in.</p>
+        <a href="{% url 'roamify:login' %}">Login</a>
+        <a href="{% url 'roamify:signup' %}">Create account</a>
+    {% endif %}
+    
     </body>
 </html>
