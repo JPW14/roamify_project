@@ -1,0 +1,214 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    min-height: 100%;
+    font-family: "Trebuchet MS", Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #111;
+}
+
+.site-wrapper {
+    min-height: 100vh;
+    border: 1.5px solid #3e6647;
+}
+
+.page-content {
+    padding: 40px 48px 60px;
+}
+
+.site-header {
+    background-color: #bdd8bb;
+    border-bottom: 1.5px solid #3e6647;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 18px;
+    min-height: 62px;
+}
+
+.brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #111;
+}
+
+.brand-logo {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    display: block;
+}
+
+.brand-name {
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 128px;
+    height: 40px;
+    padding: 0 18px;
+    border: 1.5px solid #2d7fe3;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-primary {
+    background-color: #2d7fe3;
+    color: #fff;
+}
+
+.btn-secondary {
+    background-color: #fff;
+    color: #111;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+h1 {
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+h3 {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+p {
+    line-height: 1.4;
+}
+
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-container-narrow {
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.section-subtitle {
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 28px;
+}
+
+.card {
+    background-color: #fff;
+    border: 1.5px solid #333;
+    border-radius: 10px;
+}
+
+.panel-green {
+    background-color: #bdd8bb;
+    border: 1.5px solid #333;
+    border-radius: 10px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    border: 1px solid #8c8c8c;
+    border-radius: 6px;
+    background: #fff;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 130px;
+}
+
+.home-status {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.auth-form {
+    margin-top: 24px;
+}
+
+.auth-form p {
+    margin-bottom: 16px;
+}
+
+.auth-form button {
+    margin-top: 8px;
+}
+
+.auth-switch {
+    margin-top: 20px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .site-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .site-nav {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        min-width: 120px;
+    }
+
+    .page-content {
+        padding: 24px 20px 40px;
+    }
+
+    h1 {
+        font-size: 38px;
+    }
+}

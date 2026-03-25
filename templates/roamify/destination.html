@@ -1,16 +1,9 @@
-<!DOCTYPE html>
+{% extends 'roamify/base.html' %}
 
-{% load staticfiles %}
+{% block title %}Destination | Roamify{% endblock %}
 
-<html>
-    <head>
-        <img src="{% static 'images/roamify_icon.png' %}"
-            alt="Roamify Icon" />
-        <title>Roamify</title>
-    </head>
-
-    <body>
-        <h1><strong> Roamify</strong></h1><br />
-        <h2>Destination Page Test</h2>
-    </body>
-</html>
+{% block content %}
+<div class="page-container">
+    <h1 class="section-title">Destination Page Test</h1>
+</div>
+{% endblock %}

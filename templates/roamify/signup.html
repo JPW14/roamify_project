@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sign Up</title>
-</head>
-<body>
-    <h1>Create Account</h1>
+{% extends 'roamify/base.html' %}
 
-    <form method="post">
+{% block title %}Sign Up | Roamify{% endblock %}
+
+{% block content %}
+<div class="page-container-narrow">
+    <h1 class="section-title">Create Account</h1>
+
+    <form method="post" class="auth-form">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Sign up</button>
+        <button type="submit" class="btn btn-primary">Sign Up</button>
     </form>
 
-    <p>Already have an account? <a href="{% url 'roamify:login' %}">Log in</a></p>
-</body>
-</html>
+    <p class="auth-switch">Already have an account? <a href="{% url 'roamify:login' %}">Log in</a></p>
+</div>
+{% endblock %}
