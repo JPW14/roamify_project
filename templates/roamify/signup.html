@@ -4,14 +4,19 @@
 
 {% block content %}
 <div class="page-container-narrow">
-    <h1 class="section-title">Create Account</h1>
+    <section class="auth-panel card auth-box">
+        <h1 class="section-title">Create Your Account</h1>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Sign Up</button>
-    </form>
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary auth-button">Sign Up</button>
+        </form>
 
-    <p>Already have an account? <a href="{% url 'roamify:login' %}">Log in</a></p>
+        <p class="auth-switch">
+            Already have an account?
+            <a href="{% url 'roamify:login' %}">Log in</a>
+        </p>
+    </section>
 </div>
 {% endblock %}

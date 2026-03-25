@@ -4,16 +4,40 @@
 
 {% block content %}
 <div class="page-container">
-    <h1 class="section-title">Featured Destination</h1>
+    <section class="destination-detail">
+        <div class="destination-detail-main">
+            <div class="destination-detail-image placeholder-box large-image">Main Image</div>
 
-    <h2>Kyoto, Japan</h2>
-    <p><strong>Shared by:</strong> Demo User</p>
-    <p><strong>Best for:</strong> Culture, food, and sightseeing</p>
+            <div class="destination-detail-text">
+                <h1>Tokyo</h1>
+                <p class="destination-meta">Japan</p>
 
-    <p>
-        Kyoto is known for its temples, traditional streets, and seasonal scenery.
-        It is a popular destination for travellers looking for a mix of history and modern city life.
-    </p>
+                <p>
+                    Tokyo is a dynamic travel destination known for its blend of modern city life,
+                    traditional culture, and world-famous food. Visitors can explore busy shopping streets,
+                    quiet temples, and lively nightlife all in one trip.
+                </p>
 
+            </div>
+        </div>
+
+        <aside class="review-panel panel-green">
+            <h2>Recent Reviews</h2>
+
+            <div class="review-card">
+                <p><strong>Jess:</strong> Amazing place to visit. I loved the food and the atmosphere.</p>
+            </div>
+
+            <div class="review-card">
+                <p><strong>Marcus:</strong> Great mix of traditional and modern culture. Would definitely go again.</p>
+            </div>
+
+            <form class="review-form">
+                <label class="form-label" for="review-text">Add a Review</label>
+                <textarea id="review-text" class="form-textarea" rows="4" placeholder="Write your review..."></textarea>
+                <button type="submit" class="btn btn-primary">Post Review</button>
+            </form>
+        </aside>
+    </section>
 </div>
 {% endblock %}

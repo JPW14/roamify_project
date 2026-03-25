@@ -4,24 +4,58 @@
 
 {% block content %}
 <div class="page-container">
-    <h1 class="section-title">Discover Amazing Destinations</h1>
-    <p class="section-subtitle">Explore travel destinations shared by our community</p>
+    <section class="hero-section">
+        <h1 class="section-title">Discover Amazing Destinations</h1>
+        <p class="section-subtitle">Explore travel destinations shared by our community</p>
 
-    {% if user.is_authenticated %}
-        <p>Hello, {{ user.username }}! Welcome back to Roamify.</p>
-        <p>You can browse destinations or share one of your own.</p>
-        <p>
-            <a href="{% url 'roamify:destination' %}">View destinations</a> |
-            <a href="{% url 'roamify:post' %}">Post a destination</a>
-        </p>
-    {% else %}
-        <p>Welcome to Roamify.</p>
-        <p>Browse travel inspiration and share your own destinations with the community.</p>
-        <p>
-            <a href="{% url 'roamify:login' %}">Log in</a> or
-            <a href="{% url 'roamify:signup' %}">create an account</a>
-            to get started.
-        </p>
-    {% endif %}
+        <div class="hero-actions">
+            <input type="text" class="search-input" placeholder="Search destinations...">
+            <select class="filter-select">
+                <option>Filter by Region</option>
+                <option>Europe</option>
+                <option>Asia</option>
+                <option>North America</option>
+                <option>South America</option>
+            </select>
+            <select class="filter-select">
+                <option>Sort by Popularity</option>
+                <option>Most Popular</option>
+                <option>Newest</option>
+                <option>Oldest</option>
+            </select>
+        </div>
+    </section>
+
+    <section class="destination-grid">
+        <article class="destination-card">
+            <div class="destination-image placeholder-box">Image</div>
+            <div class="destination-card-body">
+                <h3>Paris</h3>
+                <p class="destination-meta">France</p>
+                <p>A beautiful destination known for art, food, and iconic landmarks.</p>
+                <a href="{% url 'roamify:destination' %}" class="btn btn-secondary">View More</a>
+            </div>
+        </article>
+
+        <article class="destination-card">
+            <div class="destination-image placeholder-box">Image</div>
+            <div class="destination-card-body">
+                <h3>Tokyo</h3>
+                <p class="destination-meta">Japan</p>
+                <p>A vibrant city filled with nightlife, culture, and unforgettable food.</p>
+                <a href="{% url 'roamify:destination' %}" class="btn btn-secondary">View More</a>
+            </div>
+        </article>
+
+        <article class="destination-card">
+            <div class="destination-image placeholder-box">Image</div>
+            <div class="destination-card-body">
+                <h3>Barcelona</h3>
+                <p class="destination-meta">Spain</p>
+                <p>Known for seaside views, architecture, and a lively atmosphere.</p>
+                <a href="{% url 'roamify:destination' %}" class="btn btn-secondary">View More</a>
+            </div>
+        </article>
+    </section>
 </div>
 {% endblock %}

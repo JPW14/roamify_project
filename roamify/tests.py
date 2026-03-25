@@ -6,3 +6,4 @@ class UserTest(TestCase):
         user = User.objects.create_user(username='Daniel', password='pass123')
         self.assertTrue(user.check_password('pass123'))
 
+
