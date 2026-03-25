@@ -3,7 +3,39 @@
 {% block title %}Post Destination | Roamify{% endblock %}
 
 {% block content %}
-<div class="page-container">
-    <h1 class="section-title">Post Page Test</h1>
+<div class="page-container-narrow">
+    <h1 class="section-title">Post a Destination</h1>
+
+    {% if user.is_authenticated %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <p>
+                <label for="destination-name">Destination Name</label><br>
+                <input type="text" id="destination-name" name="destination_name">
+            </p>
+
+            <p>
+                <label for="country">Country</label><br>
+                <input type="text" id="country" name="country">
+            </p>
+
+            <p>
+                <label for="description">Description</label><br>
+                <textarea id="description" name="description" rows="6"></textarea>
+            </p>
+
+            <p>
+                <label for="image">Upload an image</label><br>
+                <input type="file" id="image" name="image">
+            </p>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+    {% else %}
+        <p>You need to be logged in to post a destination.</p>
+        <p><a href="{% url 'roamify:login' %}">Log in here</a></p>
+    {% endif %}
 </div>
 {% endblock %}

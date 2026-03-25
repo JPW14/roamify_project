@@ -1,36 +1,27 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Roamify{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <div class="site-wrapper">
-        <header class="site-header">
-            <div class="brand">
-                <a href="{% url 'roamify:index' %}" class="brand-link">
-                    <img src="{% static 'images/roamify_icon.png' %}" alt="Roamify Icon" class="brand-logo">
-                    <span class="brand-name">Roamify</span>
-                </a>
-            </div>
+{% extends 'roamify/base.html' %}
 
-            <nav class="site-nav">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'roamify:post' %}" class="btn btn-primary">Post Destination</a>
-                    <a href="{% url 'roamify:logout' %}" class="btn btn-secondary">Log Out</a>
-                {% else %}
-                    <a href="{% url 'roamify:signup' %}" class="btn btn-primary">Sign Up</a>
-                    <a href="{% url 'roamify:login' %}" class="btn btn-secondary">Log In</a>
-                {% endif %}
-            </nav>
-        </header>
+{% block title %}Roamify{% endblock %}
 
-        <main class="page-content">
-            {% block content %}{% endblock %}
-        </main>
-    </div>
-</body>
-</html>
+{% block content %}
+<div class="page-container">
+    <h1 class="section-title">Discover Amazing Destinations</h1>
+    <p class="section-subtitle">Explore travel destinations shared by our community</p>
+
+    {% if user.is_authenticated %}
+        <p>Hello, {{ user.username }}! Welcome back to Roamify.</p>
+        <p>You can browse destinations or share one of your own.</p>
+        <p>
+            <a href="{% url 'roamify:destination' %}">View destinations</a> |
+            <a href="{% url 'roamify:post' %}">Post a destination</a>
+        </p>
+    {% else %}
+        <p>Welcome to Roamify.</p>
+        <p>Browse travel inspiration and share your own destinations with the community.</p>
+        <p>
+            <a href="{% url 'roamify:login' %}">Log in</a> or
+            <a href="{% url 'roamify:signup' %}">create an account</a>
+            to get started.
+        </p>
+    {% endif %}
+</div>
+{% endblock %}
