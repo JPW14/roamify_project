@@ -767,7 +767,13 @@ body {
     .detail-review-textarea {
         width: 100%;
     }
-    .comment-form {
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
     margin-bottom: 18px;
 }
 
@@ -778,13 +784,15 @@ body {
     background-color: #fff;
     padding: 12px;
     resize: vertical;
-    margin-bottom: 12px;
     font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .comment-submit-btn {
-    margin-bottom: 14px;
+    min-width: 140px;
+    height: 42px;
 }
+
 
 .already-reviewed-text {
     font-size: 15px;
@@ -799,5 +807,4 @@ body {
     background-color: #fff;
     padding: 0 8px;
     font-size: 12px;
-}
 }
