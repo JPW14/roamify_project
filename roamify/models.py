@@ -53,8 +53,5 @@ class Comment(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        unique_together = ('place', 'user')
-
     def __str__(self):
         return f"{self.user.username} - {self.place.name}"
