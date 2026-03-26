@@ -64,3 +64,26 @@ class ReviewTest(TestCase):
         self.assertEqual(self.place.average_rating(), 3)
 
 
+class viewTest(Testcase):
+    def test_index_loads(self):
+        response = self.client.get(reverse('roamify:index'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_index_search(self):
+        response = self.client.get(reverse('roamify:index'), {'q': 'Eiffel'})
+        self.assertContains(response, "Eiffel Tower")
+
+    def test_index_filter_category(self):
+        response = self.client.get(reverse('roamify:index'), {'category': 'landmark'})
+        self.assertContains(response, "Eiffel Tower")
+
+    def test_index_sort_oldest(self):
+        response = self.client.get(reverse('roamify:index'), {'sort': 'oldest'})
+        self.assertEqual(response.status_code, 200)
+
+    def test_index_sort_rating(self):
+        Review.objects.create(place=self.place, user=self.user, rating=5, comment="Great")
+        response = self.client.get(reverse('roamify:index'), {'sort': 'rating'})
+        self.assertEqual(response.status_code, 200)
+
+
