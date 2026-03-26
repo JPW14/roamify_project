@@ -1,0 +1,5 @@
+Django==2.2.28
+packaging @ file:///C:/miniconda3/conda-bld/packaging_1761049096285/work
+pillow==12.1.1
+pytz==2025.2
+sqlparse==0.5.5
