@@ -791,4 +791,13 @@ body {
     font-weight: 700;
     line-height: 1.4;
 }
+
+.post-field select {
+    width: 100%;
+    height: 34px;
+    border: 1px solid #888;
+    background-color: #fff;
+    padding: 0 8px;
+    font-size: 12px;
+}
 }

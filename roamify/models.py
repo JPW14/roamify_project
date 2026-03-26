@@ -11,12 +11,22 @@ class Profile(models.Model):
         return self.user.username
 # Place Model
 class Place(models.Model):
+    CATEGORY_CHOICES = [
+        ('landmarks', 'Landmarks'),
+        ('urban', 'Urban'),
+        ('beach', 'Beach'),
+        ('nature', 'Nature'),
+    ]
+
     name = models.CharField(max_length=255)
     description = models.TextField()
     location = models.CharField(max_length=255)
     image = models.ImageField(upload_to='places/', blank=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='landmarks')
+    view_count = models.PositiveIntegerField(default=0)
 
     def average_rating(self):
         reviews = self.reviews.all()

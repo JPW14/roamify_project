@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.http import JsonResponse
+from django.db.models import Avg
 from .models import Place, Review, Comment
 
 
@@ -14,10 +15,17 @@ def index(request):
     places = Place.objects.all()
 
     if query:
-        places = places.filter(name__icontains=query)
+        places = places.filter(name__icontains=query) | Place.objects.filter(location__icontains=query)
+
+    if category != 'all':
+        places = places.filter(category=category)
 
     if sort == 'oldest':
         places = places.order_by('created_at')
+    elif sort == 'popularity':
+        places = places.order_by('-view_count', '-created_at')
+    elif sort == 'rating':
+        places = places.annotate(avg_rating=Avg('reviews__rating')).order_by('-avg_rating', '-created_at')
     else:
         places = places.order_by('-created_at')
 
@@ -35,13 +43,15 @@ def post(request):
         name = request.POST.get('name')
         description = request.POST.get('description')
         location = request.POST.get('location')
+        category = request.POST.get('category')
         image = request.FILES.get('image')
 
-        if name and description and location:
+        if name and description and location and category:
             Place.objects.create(
                 name=name,
                 description=description,
                 location=location,
+                category=category,
                 image=image,
                 created_by=request.user
             )
@@ -52,6 +62,11 @@ def post(request):
 
 def destination(request, place_id):
     place = get_object_or_404(Place, id=place_id)
+
+    # increment views each time page is opened
+    place.view_count += 1
+    place.save(update_fields=['view_count'])
+
     reviews = place.reviews.all().order_by('-created_at')
     comments = place.comments.all().order_by('-created_at')
 

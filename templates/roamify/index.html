@@ -26,6 +26,8 @@
                     <select name="sort" id="sort" class="home-sort-select" onchange="this.form.submit()">
                         <option value="date" {% if sort == 'date' %}selected{% endif %}>Date</option>
                         <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>Oldest</option>
+                        <option value="popularity" {% if sort == 'popularity' %}selected{% endif %}>Popularity</option>
+                        <option value="rating" {% if sort == 'rating' %}selected{% endif %}>Rating</option>
                     </select>
                 </div>
             </div>
@@ -56,14 +58,8 @@
 
                 <div class="place-card-body">
                     <div class="place-card-meta-top">
-                        <span class="place-card-tag">
-                            {% if category == 'all' %}
-                                Place
-                            {% else %}
-                                {{ category|title }}
-                            {% endif %}
-                        </span>
-                        <span class="place-card-rating">Rated 0.0 ★</span>
+                        <span class="place-card-tag">{{ place.get_category_display }}</span>
+                        <span class="place-card-rating">Rated {{ place.average_rating|floatformat:1 }} ★</span>
                     </div>
 
                     <h3 class="place-card-title">{{ place.name }}</h3>
