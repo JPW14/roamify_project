@@ -87,7 +87,7 @@ class viewTest(Testcase
         response = self.client.get(reverse('roamify:index'), {'sort': 'rating'})
         self.assertEqual(response.status_code, 200)
     #post tests
-     def test_post_requires_login(self):
+    def test_post_requires_login(self):
         response = self.client.get(reverse('roamify:post'))
         self.assertEqual(response.status_code, 302) 
 
@@ -126,5 +126,31 @@ class viewTest(Testcase
     def test_destination_invalid_place(self):
         response = self.client.get(reverse('roamify:destination', args=[999]))
         self.assertEqual(response.status_code, 404)
+    #comment tests
+    def test_add_comment(self):
+        self.client.login(username='user1', password='pass123')
+
+        response = self.client.post(
+            reverse('roamify:destination', args=[self.place.id]),
+            {
+                'form_type': 'comment',
+                'text': 'Nice place'
+            }
+        )
+
+        self.assertEqual(Comment.objects.count(), 1)
+
+    def test_empty_comment(self):
+        self.client.login(username='user1', password='pass123')
+
+        response = self.client.post(
+            reverse('roamify:destination', args=[self.place.id]),
+            {
+                'form_type': 'comment',
+                'text': ''
+            }
+        )
+
+        self.assertEqual(Comment.objects.count(), 0)
 
 
