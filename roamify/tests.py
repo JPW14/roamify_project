@@ -64,3 +64,5 @@ class ReviewTest(TestCase):
         self.assertEqual(self.place.average_rating(), 3)
 
 
+class viewTest(Testcase):
+    
