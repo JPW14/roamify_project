@@ -23,9 +23,13 @@
                     </div>
 
                     <div class="detail-author">
+                    {% if place.created_by.profile.profile_pic %}
+                        <img src="{{ place.created_by.profile.profile_pic.url }}" alt="{{ place.created_by.username }}" class="user-mini-pic">
+                    {% else %}
                         <span class="detail-author-icon">◯</span>
-                        <span>{{ place.created_by.username }}</span>
-                    </div>
+                    {% endif %}
+                    <span>{{ place.created_by.profile.display_name|default:place.created_by.username }}</span>
+                </div>
                 </div>
 
                 <div class="detail-about">
@@ -47,9 +51,13 @@
                         {% for review in reviews|slice:":2" %}
                             <div class="recent-review-item">
                                 <div class="recent-review-user">
-                                    <span class="recent-review-icon">◯</span>
-                                    <div>
-                                        <strong>{{ review.user.username }}</strong>
+                                    {% if review.user.profile.profile_pic %}
+                                            <img src="{{ review.user.profile.profile_pic.url }}" alt="{{ review.user.username }}" class="user-mini-pic">
+                                        {% else %}
+                                            <span class="recent-review-icon">◯</span>
+                                        {% endif %}
+                                        <div>
+                                            <strong>{{ review.user.profile.display_name|default:review.user.username }}</strong>
                                         <p>{{ review.comment }}</p>
                                     </div>
                                 </div>
@@ -129,8 +137,12 @@
                     <div class="comment-card">
                         <div class="comment-top">
                             <span class="comment-user">
-                                <span class="comment-user-icon">◯</span>
-                                <strong>{{ comment.user.username }}</strong>
+                                {% if comment.user.profile.profile_pic %}
+                                    <img src="{{ comment.user.profile.profile_pic.url }}" alt="{{ comment.user.username }}" class="user-mini-pic">
+                                {% else %}
+                                    <span class="comment-user-icon">◯</span>
+                                {% endif %}
+                                <strong>{{ comment.user.profile.display_name|default:comment.user.username }}</strong>
                             </span>
                             <span class="comment-date">{{ comment.created_at|date:"M d, Y" }}</span>
                         </div>

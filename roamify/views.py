@@ -180,21 +180,37 @@ def signup(request):
 @login_required
 def profile(request):
     profile = Profile.objects.get_or_create(user=request.user)[0]
+    error_message = ""
 
     if request.method == 'POST':
-        request.user.username = request.POST.get('username', request.user.username)
-        request.user.save()
+        new_username = request.POST.get('username', '').strip()
+        new_display_name = request.POST.get('display_name', '').strip()
+        new_bio = request.POST.get('bio', '').strip()
+        new_profile_pic = request.FILES.get('profile_pic')
 
-        profile.display_name = request.POST.get('display_name', profile.display_name)
-        profile.bio = request.POST.get('bio', profile.bio)
+        if new_username:
+            existing_user = User.objects.filter(username=new_username).exclude(id=request.user.id).first()
+            if existing_user:
+                error_message = "That username is already taken."
+            else:
+                request.user.username = new_username
+                request.user.save()
 
-        if request.FILES.get('profile_pic'):
-            profile.profile_pic = request.FILES.get('profile_pic')
+                profile.display_name = new_display_name
+                profile.bio = new_bio
 
-        profile.save()
-        return redirect('roamify:profile')
+                if new_profile_pic:
+                    profile.profile_pic = new_profile_pic
 
-    return render(request, 'roamify/profile.html', {'profile': profile})
+                profile.save()
+                return redirect('roamify:profile')
+        else:
+            error_message = "Username cannot be empty."
+
+    return render(request, 'roamify/profile.html', {
+        'profile': profile,
+        'error_message': error_message,
+    })
 
 
 @login_required

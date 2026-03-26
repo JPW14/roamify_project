@@ -7,6 +7,10 @@
     <section class="auth-card">
         <h1 class="auth-title">My Profile</h1>
 
+        {% if error_message %}
+            <p class="profile-error">{{ error_message }}</p>
+        {% endif %}
+
         {% if profile.profile_pic %}
             <img src="{{ profile.profile_pic.url }}" alt="{{ user.username }}" class="profile-page-pic">
         {% endif %}
