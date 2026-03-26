@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from .models import Place, Review
+from django.http import JsonResponse
+from .models import Place, Review, Comment
+
 
 def index(request):
     query = request.GET.get('q', '')
@@ -26,6 +28,7 @@ def index(request):
         'category': category,
     })
 
+
 @login_required
 def post(request):
     if request.method == 'POST':
@@ -34,44 +37,107 @@ def post(request):
         location = request.POST.get('location')
         image = request.FILES.get('image')
 
-        Place.objects.create(
-            name=name,
-            description=description,
-            location=location,
-            image=image,
-            created_by=request.user
-        )
-
-        return redirect('roamify:index')
+        if name and description and location:
+            Place.objects.create(
+                name=name,
+                description=description,
+                location=location,
+                image=image,
+                created_by=request.user
+            )
+            return redirect('roamify:index')
 
     return render(request, 'roamify/post.html')
+
 
 def destination(request, place_id):
     place = get_object_or_404(Place, id=place_id)
     reviews = place.reviews.all().order_by('-created_at')
+    comments = place.comments.all().order_by('-created_at')
+
+    user_review = None
+    if request.user.is_authenticated:
+        user_review = Review.objects.filter(place=place, user=request.user).first()
 
     if request.method == 'POST' and request.user.is_authenticated:
-        rating = request.POST.get('rating')
-        comment = request.POST.get('comment')
+        form_type = request.POST.get('form_type')
 
-        if rating and comment:
-            try:
-                rating = int(rating)
-                if 1 <= rating <= 5:
-                    Review.objects.create(
-                        place=place,
-                        user=request.user,
-                        rating=rating,
-                        comment=comment
-                    )
-                    return redirect('roamify:destination', place_id=place.id)
-            except ValueError:
-                pass
+        if form_type == 'review':
+            rating = request.POST.get('rating')
+            comment = request.POST.get('comment')
+
+            if rating and comment:
+                try:
+                    rating = int(rating)
+                    if 1 <= rating <= 5:
+                        if user_review:
+                            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                                return JsonResponse({
+                                    'success': False,
+                                    'error': 'You have already reviewed this destination.'
+                                })
+                            return redirect('roamify:destination', place_id=place.id)
+
+                        review = Review.objects.create(
+                            place=place,
+                            user=request.user,
+                            rating=rating,
+                            comment=comment
+                        )
+
+                        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                            return JsonResponse({
+                                'success': True,
+                                'username': review.user.username,
+                                'rating': review.rating,
+                                'comment': review.comment,
+                                'created_at': review.created_at.strftime('%b %d, %Y'),
+                                'average_rating': f"{place.average_rating():.1f}",
+                                'review_count': place.reviews.count(),
+                            })
+
+                        return redirect('roamify:destination', place_id=place.id)
+                except ValueError:
+                    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                        return JsonResponse({
+                            'success': False,
+                            'error': 'Invalid rating.'
+                        })
+
+        elif form_type == 'comment':
+            text = request.POST.get('text')
+
+            if text:
+                comment_obj = Comment.objects.create(
+                    place=place,
+                    user=request.user,
+                    text=text
+                )
+
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'success': True,
+                        'username': comment_obj.user.username,
+                        'text': comment_obj.text,
+                        'created_at': comment_obj.created_at.strftime('%b %d, %Y'),
+                        'comment_count': place.comments.count(),
+                    })
+
+                return redirect('roamify:destination', place_id=place.id)
+
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Comment cannot be empty.'
+                })
 
     return render(request, 'roamify/destination.html', {
         'place': place,
-        'reviews': reviews
+        'reviews': reviews,
+        'comments': comments,
+        'user_review': user_review,
     })
+
 
 def signup(request):
     if request.method == 'POST':

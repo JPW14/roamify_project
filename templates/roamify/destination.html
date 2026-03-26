@@ -34,7 +34,7 @@
             </div>
 
             <aside class="detail-right">
-                <div class="rating-summary-box">
+                <div class="rating-summary-box" id="rating-summary-box">
                     <h3>Rated {{ place.average_rating|floatformat:1 }} ★</h3>
                     <p>Based on {{ reviews|length }} Review{{ reviews|length|pluralize }}</p>
                 </div>
@@ -42,7 +42,7 @@
                 <div class="recent-reviews-box">
                     <h3>Recent Reviews</h3>
 
-                    <div class="recent-reviews-list">
+                    <div class="recent-reviews-list" id="recent-reviews-list">
                         {% for review in reviews|slice:":2" %}
                             <div class="recent-review-item">
                                 <div class="recent-review-user">
@@ -55,7 +55,7 @@
                                 <span class="recent-review-score">{{ review.rating }} ★</span>
                             </div>
                         {% empty %}
-                            <p>No reviews yet.</p>
+                            <p id="no-reviews-text">No reviews yet.</p>
                         {% endfor %}
                     </div>
                 </div>
@@ -64,23 +64,33 @@
                     <h3>Been Here?<br>Share your opinion</h3>
 
                     {% if user.is_authenticated %}
-                        <form method="post" class="detail-review-form">
-                            {% csrf_token %}
-                            <input
-                                type="number"
-                                name="rating"
-                                min="1"
-                                max="5"
-                                placeholder="Enter Rating..."
-                                class="detail-review-rating"
-                            >
-                            <textarea
-                                name="comment"
-                                placeholder="Share your experience..."
-                                class="detail-review-textarea"
-                            ></textarea>
-                            <button type="submit" class="detail-submit-btn">Submit</button>
-                        </form>
+                        {% if user_review %}
+                            <p class="already-reviewed-text">You have already reviewed this destination.</p>
+                        {% else %}
+                            <form method="post" class="detail-review-form" id="review-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="review">
+
+                                <input
+                                    type="number"
+                                    name="rating"
+                                    min="1"
+                                    max="5"
+                                    placeholder="Enter Rating..."
+                                    class="detail-review-rating"
+                                    id="review-rating"
+                                >
+
+                                <textarea
+                                    name="comment"
+                                    placeholder="Share your experience..."
+                                    class="detail-review-textarea"
+                                    id="review-comment"
+                                ></textarea>
+
+                                <button type="submit" class="detail-submit-btn">Submit</button>
+                            </form>
+                        {% endif %}
                     {% else %}
                         <p>
                             <a href="{% url 'roamify:login' %}">Log in</a> to leave a review.
@@ -91,24 +101,163 @@
         </div>
 
         <div class="comments-panel">
-            <h3>Comments ({{ reviews|length }})</h3>
-            <div class="comments-box">
-                {% for review in reviews %}
+            <h3 id="comments-heading">Comments ({{ comments|length }})</h3>
+
+            {% if user.is_authenticated %}
+                <form method="post" class="comment-form" id="comment-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="comment">
+
+                    <textarea
+                        name="text"
+                        class="comment-input-box"
+                        id="comment-text"
+                        placeholder="Share your experience..."
+                    ></textarea>
+
+                    <button type="submit" class="detail-submit-btn comment-submit-btn">Post Comment</button>
+                </form>
+            {% else %}
+                <p>
+                    <a href="{% url 'roamify:login' %}">Log in</a> to leave a comment.
+                </p>
+            {% endif %}
+
+            <div class="comments-box" id="comments-box">
+                {% for comment in comments %}
                     <div class="comment-card">
                         <div class="comment-top">
                             <span class="comment-user">
                                 <span class="comment-user-icon">◯</span>
-                                <strong>{{ review.user.username }}</strong>
+                                <strong>{{ comment.user.username }}</strong>
                             </span>
-                            <span class="comment-date">{{ review.created_at|date:"M d, Y" }}</span>
+                            <span class="comment-date">{{ comment.created_at|date:"M d, Y" }}</span>
                         </div>
-                        <p>{{ review.comment }}</p>
+                        <p>{{ comment.text }}</p>
                     </div>
                 {% empty %}
-                    <p>No comments yet.</p>
+                    <p id="no-comments-text">No comments yet.</p>
                 {% endfor %}
             </div>
         </div>
     </section>
 </div>
+
+{% if user.is_authenticated %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reviewForm = document.getElementById('review-form');
+    const commentForm = document.getElementById('comment-form');
+
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(reviewForm);
+
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert(data.error || 'Could not submit review.');
+                    return;
+                }
+
+                const noReviewsText = document.getElementById('no-reviews-text');
+                if (noReviewsText) {
+                    noReviewsText.remove();
+                }
+
+                const reviewsList = document.getElementById('recent-reviews-list');
+
+                const newReview = document.createElement('div');
+                newReview.className = 'recent-review-item';
+                newReview.innerHTML = `
+                    <div class="recent-review-user">
+                        <span class="recent-review-icon">◯</span>
+                        <div>
+                            <strong>${data.username}</strong>
+                            <p>${data.comment}</p>
+                        </div>
+                    </div>
+                    <span class="recent-review-score">${data.rating} ★</span>
+                `;
+
+                reviewsList.prepend(newReview);
+
+                const summaryBox = document.getElementById('rating-summary-box');
+                summaryBox.innerHTML = `
+                    <h3>Rated ${data.average_rating} ★</h3>
+                    <p>Based on ${data.review_count} Review${data.review_count == 1 ? '' : 's'}</p>
+                `;
+
+                reviewForm.outerHTML = '<p class="already-reviewed-text">You have already reviewed this destination.</p>';
+            })
+            .catch(error => {
+                console.error('Review submission failed:', error);
+            });
+        });
+    }
+
+    if (commentForm) {
+        commentForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(commentForm);
+
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert(data.error || 'Could not submit comment.');
+                    return;
+                }
+
+                const noCommentsText = document.getElementById('no-comments-text');
+                if (noCommentsText) {
+                    noCommentsText.remove();
+                }
+
+                const commentsBox = document.getElementById('comments-box');
+
+                const newComment = document.createElement('div');
+                newComment.className = 'comment-card';
+                newComment.innerHTML = `
+                    <div class="comment-top">
+                        <span class="comment-user">
+                            <span class="comment-user-icon">◯</span>
+                            <strong>${data.username}</strong>
+                        </span>
+                        <span class="comment-date">${data.created_at}</span>
+                    </div>
+                    <p>${data.text}</p>
+                `;
+
+                commentsBox.prepend(newComment);
+
+                const commentsHeading = document.getElementById('comments-heading');
+                commentsHeading.textContent = `Comments (${data.comment_count})`;
+
+                commentForm.reset();
+            })
+            .catch(error => {
+                console.error('Comment submission failed:', error);
+            });
+        });
+    }
+});
+</script>
+{% endif %}
 {% endblock %}
