@@ -3,40 +3,94 @@
 {% block title %}{{ place.name }} | Roamify{% endblock %}
 
 {% block content %}
-<div class="page-container">
-    <section class="destination-detail">
-        <div class="destination-detail-main">
-            {% if place.image %}
-                <img src="{{ place.image.url }}" alt="{{ place.name }}" class="large-image" style="object-fit: cover;">
-            {% else %}
-                <div class="destination-detail-image placeholder-box large-image">No image</div>
-            {% endif %}
+<div class="detail-shell">
+    <section class="detail-layout">
+        <div class="detail-main">
+            <div class="detail-left">
+                {% if place.image %}
+                    <img src="{{ place.image.url }}" alt="{{ place.name }}" class="detail-image">
+                {% else %}
+                    <div class="detail-image detail-image-placeholder">No image</div>
+                {% endif %}
 
-            <div class="destination-detail-text">
-                <h1>{{ place.name }}</h1>
-                <p class="destination-meta">{{ place.location }}</p>
-                <p><strong>Posted by:</strong> {{ place.created_by.username }}</p>
-                <p><strong>Posted on:</strong> {{ place.created_at|date:"F d, Y" }}</p>
+                <div class="detail-main-content">
+                    <h1 class="detail-title">{{ place.name }}</h1>
 
-                <p>
-                    {{ place.description }}
-                </p>
+                    <div class="detail-location-date">
+                        <span class="detail-location">◉ {{ place.location }}</span>
+                        <span class="detail-date">{{ place.created_at|date:"F d, Y" }}</span>
+                    </div>
+
+                    <div class="detail-author">
+                        <span class="detail-author-icon">◯</span>
+                        <span>{{ place.created_by.username }}</span>
+                    </div>
+                </div>
+
+                <div class="detail-about">
+                    <h2 class="detail-section-heading">About this Destination</h2>
+                    <p>{{ place.description }}</p>
+                </div>
             </div>
+
+            <aside class="detail-right">
+                <div class="rating-summary-box">
+                    <h3>Rated {{ place.average_rating|floatformat:1 }} ★</h3>
+                    <p>Based on {{ reviews|length }} Review{{ reviews|length|pluralize }}</p>
+                </div>
+
+                <div class="recent-reviews-box">
+                    <h3>Recent Reviews</h3>
+
+                    <div class="recent-reviews-list">
+                        {% for review in reviews|slice:":2" %}
+                            <div class="recent-review-item">
+                                <div class="recent-review-user">
+                                    <span class="recent-review-icon">◯</span>
+                                    <div>
+                                        <strong>{{ review.user.username }}</strong>
+                                        <p>{{ review.comment }}</p>
+                                    </div>
+                                </div>
+                                <span class="recent-review-score">{{ review.rating }} ★</span>
+                            </div>
+                        {% empty %}
+                            <p>No reviews yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="review-form-box">
+                    <h3>Been Here?<br>Share your opinion</h3>
+                    <form method="post" class="detail-review-form">
+                        {% csrf_token %}
+                        <input type="number" name="rating" min="1" max="5" placeholder="Enter Rating..." class="detail-review-rating">
+                        <textarea name="comment" placeholder="Share your experience..." class="detail-review-textarea"></textarea>
+                        <button type="submit" class="detail-submit-btn">Submit</button>
+                    </form>
+                </div>
+            </aside>
         </div>
 
-        <aside class="review-panel panel-green">
-            <h2>Recent Reviews</h2>
-
-            {% for review in reviews %}
-                <div class="review-card">
-                    <p><strong>{{ review.user.username }}</strong> — {{ review.rating }}/5</p>
-                    <p>{{ review.comment }}</p>
-                    <p style="font-size: 12px; margin-top: 8px;">{{ review.created_at|date:"M d, Y" }}</p>
-                </div>
-            {% empty %}
-                <p>No reviews yet.</p>
-            {% endfor %}
-        </aside>
+        <div class="comments-panel">
+            <h3>Comments ({{ reviews|length }})</h3>
+            <div class="comments-box">
+                {% for review in reviews %}
+                    <div class="comment-card">
+                        <div class="comment-top">
+                            <span class="comment-user">
+                                <span class="comment-user-icon">◯</span>
+                                <strong>{{ review.user.username }}</strong>
+                            </span>
+                            <span class="comment-date">{{ review.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <p>{{ review.comment }}</p>
+                    </div>
+                {% empty %}
+                    <p>No comments yet.</p>
+                {% endfor %}
+            </div>
+        </div>
     </section>
 </div>
 {% endblock %}

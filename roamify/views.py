@@ -6,14 +6,24 @@ from .models import Place
 
 def index(request):
     query = request.GET.get('q', '')
-    places = Place.objects.all().order_by('-created_at')
+    sort = request.GET.get('sort', 'date')
+    category = request.GET.get('category', 'all')
+
+    places = Place.objects.all()
 
     if query:
         places = places.filter(name__icontains=query)
 
+    if sort == 'oldest':
+        places = places.order_by('created_at')
+    else:
+        places = places.order_by('-created_at')
+
     return render(request, 'roamify/index.html', {
         'places': places,
-        'query': query
+        'query': query,
+        'sort': sort,
+        'category': category,
     })
 
 @login_required

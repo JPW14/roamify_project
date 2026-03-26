@@ -3,40 +3,40 @@
 {% block title %}Post Destination | Roamify{% endblock %}
 
 {% block content %}
-<div class="page-container-narrow">
-    <section class="card post-box">
-        <h1 class="section-title">Share a Travel Experience</h1>
+<div class="post-shell">
+    <section class="post-card">
+        <h1 class="post-title">Share a Travel Experience</h1>
 
         {% if user.is_authenticated %}
-            <form method="post" enctype="multipart/form-data" class="post-form">
+            <form method="post" enctype="multipart/form-data" class="post-form-custom">
                 {% csrf_token %}
 
-                <p>
-                    <label class="form-label" for="name">Destination</label>
-                    <input class="form-input" type="text" id="name" name="name" placeholder="Enter destination name">
-                </p>
+                <div class="post-field post-field-small">
+                    <label for="name">Destination</label>
+                    <input type="text" id="name" name="name" placeholder="Enter Destination...">
+                </div>
 
-                <p>
-                    <label class="form-label" for="location">Location</label>
-                    <input class="form-input" type="text" id="location" name="location" placeholder="Enter destination location">
-                </p>
+                <div class="post-field post-field-small">
+                    <label for="location">Location ◉</label>
+                    <input type="text" id="location" name="location" placeholder="Enter Destination Location...">
+                </div>
 
-                <p>
-                    <label class="form-label" for="description">Description</label>
-                    <textarea class="form-textarea" id="description" name="description" placeholder="Describe the destination"></textarea>
-                </p>
+                <div class="post-field">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" placeholder="Enter Description..."></textarea>
+                </div>
 
-                <p>
-                    <label class="form-label" for="image">Destination Image</label>
-                    <input class="form-input file-input" type="file" id="image" name="image">
-                </p>
+                <div class="post-image-upload">
+                    <label for="image">Destination Image ☐</label>
+                    <input type="file" id="image" name="image">
+                </div>
 
-                <button type="submit" class="btn btn-primary auth-button">Submit</button>
+                <button type="submit" class="post-submit-btn">Submit</button>
             </form>
         {% else %}
             <div class="login-required-box">
                 <p>You need to be logged in to post a destination.</p>
-                <a href="{% url 'roamify:login' %}" class="btn btn-primary">Log In</a>
+                <a href="{% url 'roamify:login' %}" class="auth-submit-btn">Log In</a>
             </div>
         {% endif %}
     </section>

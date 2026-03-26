@@ -3,24 +3,32 @@
 {% block title %}Login | Roamify{% endblock %}
 
 {% block content %}
-<div class="page-container-narrow">
-    <section class="auth-panel card auth-box">
-        <h1 class="section-title">Login to Your Account</h1>
+<div class="auth-shell">
+    <section class="auth-card">
+        <h1 class="auth-title">Login To Your Account</h1>
 
-        <form method="post" class="auth-form">
+        <form method="post" class="auth-form-custom">
             {% csrf_token %}
-            {{ form.as_p }}
+
+            <div class="auth-field">
+                <label for="{{ form.username.id_for_label }}">Email</label>
+                {{ form.username }}
+            </div>
+
+            <div class="auth-field">
+                <label for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+            </div>
 
             {% if next %}
                 <input type="hidden" name="next" value="{{ next }}">
             {% endif %}
 
-            <button type="submit" class="btn btn-primary auth-button">Log In</button>
+            <button type="submit" class="auth-submit-btn">Login</button>
         </form>
 
-        <p class="auth-switch">
-            Don’t have an account?
-            <a href="{% url 'roamify:signup' %}">Sign up</a>
+        <p class="auth-footer-text">
+            Not Registered? <a href="{% url 'roamify:signup' %}">Sign Up</a>
         </p>
     </section>
 </div>

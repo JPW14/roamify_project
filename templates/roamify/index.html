@@ -3,41 +3,81 @@
 {% block title %}Roamify{% endblock %}
 
 {% block content %}
-<div class="page-container">
-    <section class="hero-section">
-        <h1 class="section-title">Discover Amazing Destinations</h1>
-        <p class="section-subtitle">Explore travel destinations shared by our community</p>
+<div class="home-shell">
+    <section class="home-hero">
+        <h1 class="home-title">Discover Amazing Destinations</h1>
+        <p class="home-subtitle">Explore travel destinations shared by our community</p>
 
-        <form method="get" class="hero-actions">
-            <input
-                type="text"
-                name="q"
-                class="search-input"
-                placeholder="Search destinations..."
-                value="{{ query }}"
-            >
-            <button type="submit" class="btn btn-primary">Search</button>
+        <form method="get" class="home-controls">
+            <div class="home-search-sort">
+                <div class="home-search-box">
+                    <input
+                        type="text"
+                        name="q"
+                        class="home-search-input"
+                        placeholder="Search Destinations..."
+                        value="{{ query }}"
+                    >
+                    <button type="submit" class="home-search-button">⌕</button>
+                </div>
+
+                <div class="home-sort-group">
+                    <label for="sort" class="home-sort-label">Sort by</label>
+                    <select name="sort" id="sort" class="home-sort-select" onchange="this.form.submit()">
+                        <option value="date" {% if sort == 'date' %}selected{% endif %}>Date</option>
+                        <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>Oldest</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="home-category-row">
+                <a href="?q={{ query }}&sort={{ sort }}&category=all"
+                   class="home-category-pill {% if category == 'all' %}is-active{% endif %}">All</a>
+                <a href="?q={{ query }}&sort={{ sort }}&category=landmarks"
+                   class="home-category-pill {% if category == 'landmarks' %}is-active{% endif %}">Landmarks</a>
+                <a href="?q={{ query }}&sort={{ sort }}&category=urban"
+                   class="home-category-pill {% if category == 'urban' %}is-active{% endif %}">Urban</a>
+                <a href="?q={{ query }}&sort={{ sort }}&category=beach"
+                   class="home-category-pill {% if category == 'beach' %}is-active{% endif %}">Beach</a>
+                <a href="?q={{ query }}&sort={{ sort }}&category=nature"
+                   class="home-category-pill {% if category == 'nature' %}is-active{% endif %}">Nature</a>
+            </div>
         </form>
     </section>
 
-    <section class="destination-grid">
+    <section class="home-card-grid">
         {% for place in places %}
-            <article class="destination-card">
+            <article class="place-card">
                 {% if place.image %}
-                    <img src="{{ place.image.url }}" alt="{{ place.name }}" class="destination-card-image">
+                    <img src="{{ place.image.url }}" alt="{{ place.name }}" class="place-card-image">
                 {% else %}
-                    <div class="destination-image placeholder-box">No image</div>
+                    <div class="place-card-image place-card-image-placeholder">No image</div>
                 {% endif %}
 
-                <div class="destination-card-body">
-                    <h3>{{ place.name }}</h3>
-                    <p class="destination-meta">{{ place.location }}</p>
-                    <p>{{ place.description|truncatewords:18 }}</p>
-                    <a href="{% url 'roamify:destination' place.id %}" class="btn btn-secondary">View More</a>
+                <div class="place-card-body">
+                    <div class="place-card-meta-top">
+                        <span class="place-card-tag">
+                            {% if category == 'all' %}
+                                Place
+                            {% else %}
+                                {{ category|title }}
+                            {% endif %}
+                        </span>
+                        <span class="place-card-rating">Rated 0.0 ★</span>
+                    </div>
+
+                    <h3 class="place-card-title">{{ place.name }}</h3>
+
+                    <div class="place-card-meta-bottom">
+                        <span class="place-card-location">◉ {{ place.location }}</span>
+                        <span class="place-card-date">{{ place.created_at|date:"M d, Y" }}</span>
+                    </div>
+
+                    <a href="{% url 'roamify:destination' place.id %}" class="place-card-link">View More</a>
                 </div>
             </article>
         {% empty %}
-            <p>No destinations found.</p>
+            <p class="empty-state">No destinations found.</p>
         {% endfor %}
     </section>
 </div>

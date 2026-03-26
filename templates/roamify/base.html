@@ -10,12 +10,10 @@
 <body>
     <div class="site-wrapper">
         <header class="site-header">
-            <div class="brand">
-                <a href="{% url 'roamify:index' %}" class="brand-link">
-                    <img src="{% static 'images/roamify_icon.png' %}" alt="Roamify Icon" class="brand-logo">
-                    <span class="brand-name">Roamify</span>
-                </a>
-            </div>
+            <a href="{% url 'roamify:index' %}" class="brand-link">
+                <img src="{% static 'images/roamify_icon.png' %}" alt="Roamify Icon" class="brand-logo">
+                <span class="brand-name">Roamify</span>
+            </a>
 
             <nav class="site-nav">
                 {% if user.is_authenticated %}
