@@ -64,7 +64,8 @@ class ReviewTest(TestCase):
         self.assertEqual(self.place.average_rating(), 3)
 
 
-class viewTest(Testcase):
+class viewTest(Testcase
+    #index tests
     def test_index_loads(self):
         response = self.client.get(reverse('roamify:index'))
         self.assertEqual(response.status_code, 200)
@@ -85,5 +86,45 @@ class viewTest(Testcase):
         Review.objects.create(place=self.place, user=self.user, rating=5, comment="Great")
         response = self.client.get(reverse('roamify:index'), {'sort': 'rating'})
         self.assertEqual(response.status_code, 200)
+    #post tests
+     def test_post_requires_login(self):
+        response = self.client.get(reverse('roamify:post'))
+        self.assertEqual(response.status_code, 302) 
+
+    def test_post_create_place(self):
+        self.client.login(username='user1', password='pass123')
+
+        response = self.client.post(reverse('roamify:post'), {
+            'name': 'Colosseum',
+            'description': 'Ancient Rome',
+            'location': 'Italy',
+            'category': 'history'
+        })
+
+        self.assertEqual(Place.objects.count(), 2)
+        self.assertRedirects(response, reverse('roamify:index'))
+
+    def test_post_missing_fields(self):
+        self.client.login(username='user1', password='pass123')
+
+        response = self.client.post(reverse('roamify:post'), {
+            'name': '',
+            'description': '',
+        })
+
+        self.assertEqual(Place.objects.count(), 1) 
+    #Destination tests
+    def test_destination_loads(self):
+        response = self.client.get(reverse('roamify:destination', args=[self.place.id]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_destination_view_count_increment(self):
+        self.client.get(reverse('roamify:destination', args=[self.place.id]))
+        self.place.refresh_from_db()
+        self.assertEqual(self.place.view_count, 1)
+
+    def test_destination_invalid_place(self):
+        response = self.client.get(reverse('roamify:destination', args=[999]))
+        self.assertEqual(response.status_code, 404)
 
 
