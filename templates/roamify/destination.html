@@ -62,12 +62,30 @@
 
                 <div class="review-form-box">
                     <h3>Been Here?<br>Share your opinion</h3>
-                    <form method="post" class="detail-review-form">
-                        {% csrf_token %}
-                        <input type="number" name="rating" min="1" max="5" placeholder="Enter Rating..." class="detail-review-rating">
-                        <textarea name="comment" placeholder="Share your experience..." class="detail-review-textarea"></textarea>
-                        <button type="submit" class="detail-submit-btn">Submit</button>
-                    </form>
+
+                    {% if user.is_authenticated %}
+                        <form method="post" class="detail-review-form">
+                            {% csrf_token %}
+                            <input
+                                type="number"
+                                name="rating"
+                                min="1"
+                                max="5"
+                                placeholder="Enter Rating..."
+                                class="detail-review-rating"
+                            >
+                            <textarea
+                                name="comment"
+                                placeholder="Share your experience..."
+                                class="detail-review-textarea"
+                            ></textarea>
+                            <button type="submit" class="detail-submit-btn">Submit</button>
+                        </form>
+                    {% else %}
+                        <p>
+                            <a href="{% url 'roamify:login' %}">Log in</a> to leave a review.
+                        </p>
+                    {% endif %}
                 </div>
             </aside>
         </div>

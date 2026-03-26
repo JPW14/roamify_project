@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from .models import Place
+from .models import Place, Review
 
 def index(request):
     query = request.GET.get('q', '')
@@ -49,6 +49,24 @@ def post(request):
 def destination(request, place_id):
     place = get_object_or_404(Place, id=place_id)
     reviews = place.reviews.all().order_by('-created_at')
+
+    if request.method == 'POST' and request.user.is_authenticated:
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+
+        if rating and comment:
+            try:
+                rating = int(rating)
+                if 1 <= rating <= 5:
+                    Review.objects.create(
+                        place=place,
+                        user=request.user,
+                        rating=rating,
+                        comment=comment
+                    )
+                    return redirect('roamify:destination', place_id=place.id)
+            except ValueError:
+                pass
 
     return render(request, 'roamify/destination.html', {
         'place': place,
