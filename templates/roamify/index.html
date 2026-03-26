@@ -8,54 +8,37 @@
         <h1 class="section-title">Discover Amazing Destinations</h1>
         <p class="section-subtitle">Explore travel destinations shared by our community</p>
 
-        <div class="hero-actions">
-            <input type="text" class="search-input" placeholder="Search destinations...">
-            <select class="filter-select">
-                <option>Filter by Region</option>
-                <option>Europe</option>
-                <option>Asia</option>
-                <option>North America</option>
-                <option>South America</option>
-            </select>
-            <select class="filter-select">
-                <option>Sort by Popularity</option>
-                <option>Most Popular</option>
-                <option>Newest</option>
-                <option>Oldest</option>
-            </select>
-        </div>
+        <form method="get" class="hero-actions">
+            <input
+                type="text"
+                name="q"
+                class="search-input"
+                placeholder="Search destinations..."
+                value="{{ query }}"
+            >
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
     </section>
 
     <section class="destination-grid">
-        <article class="destination-card">
-            <div class="destination-image placeholder-box">Image</div>
-            <div class="destination-card-body">
-                <h3>Paris</h3>
-                <p class="destination-meta">France</p>
-                <p>A beautiful destination known for art, food, and iconic landmarks.</p>
-                <a href="{% url 'roamify:destination' %}" class="btn btn-secondary">View More</a>
-            </div>
-        </article>
+        {% for place in places %}
+            <article class="destination-card">
+                {% if place.image %}
+                    <img src="{{ place.image.url }}" alt="{{ place.name }}" class="destination-card-image">
+                {% else %}
+                    <div class="destination-image placeholder-box">No image</div>
+                {% endif %}
 
-        <article class="destination-card">
-            <div class="destination-image placeholder-box">Image</div>
-            <div class="destination-card-body">
-                <h3>Tokyo</h3>
-                <p class="destination-meta">Japan</p>
-                <p>A vibrant city filled with nightlife, culture, and unforgettable food.</p>
-                <a href="{% url 'roamify:destination' %}" class="btn btn-secondary">View More</a>
-            </div>
-        </article>
-
-        <article class="destination-card">
-            <div class="destination-image placeholder-box">Image</div>
-            <div class="destination-card-body">
-                <h3>Barcelona</h3>
-                <p class="destination-meta">Spain</p>
-                <p>Known for seaside views, architecture, and a lively atmosphere.</p>
-                <a href="{% url 'roamify:destination' %}" class="btn btn-secondary">View More</a>
-            </div>
-        </article>
+                <div class="destination-card-body">
+                    <h3>{{ place.name }}</h3>
+                    <p class="destination-meta">{{ place.location }}</p>
+                    <p>{{ place.description|truncatewords:18 }}</p>
+                    <a href="{% url 'roamify:destination' place.id %}" class="btn btn-secondary">View More</a>
+                </div>
+            </article>
+        {% empty %}
+            <p>No destinations found.</p>
+        {% endfor %}
     </section>
 </div>
 {% endblock %}

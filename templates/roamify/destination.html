@@ -1,42 +1,41 @@
 {% extends 'roamify/base.html' %}
 
-{% block title %}Destination | Roamify{% endblock %}
+{% block title %}{{ place.name }} | Roamify{% endblock %}
 
 {% block content %}
 <div class="page-container">
     <section class="destination-detail">
         <div class="destination-detail-main">
-            <div class="destination-detail-image placeholder-box large-image">Main Image</div>
+            {% if place.image %}
+                <img src="{{ place.image.url }}" alt="{{ place.name }}" class="large-image" style="object-fit: cover;">
+            {% else %}
+                <div class="destination-detail-image placeholder-box large-image">No image</div>
+            {% endif %}
 
             <div class="destination-detail-text">
-                <h1>Tokyo</h1>
-                <p class="destination-meta">Japan</p>
+                <h1>{{ place.name }}</h1>
+                <p class="destination-meta">{{ place.location }}</p>
+                <p><strong>Posted by:</strong> {{ place.created_by.username }}</p>
+                <p><strong>Posted on:</strong> {{ place.created_at|date:"F d, Y" }}</p>
 
                 <p>
-                    Tokyo is a dynamic travel destination known for its blend of modern city life,
-                    traditional culture, and world-famous food. Visitors can explore busy shopping streets,
-                    quiet temples, and lively nightlife all in one trip.
+                    {{ place.description }}
                 </p>
-
             </div>
         </div>
 
         <aside class="review-panel panel-green">
             <h2>Recent Reviews</h2>
 
-            <div class="review-card">
-                <p><strong>Jess:</strong> Amazing place to visit. I loved the food and the atmosphere.</p>
-            </div>
-
-            <div class="review-card">
-                <p><strong>Marcus:</strong> Great mix of traditional and modern culture. Would definitely go again.</p>
-            </div>
-
-            <form class="review-form">
-                <label class="form-label" for="review-text">Add a Review</label>
-                <textarea id="review-text" class="form-textarea" rows="4" placeholder="Write your review..."></textarea>
-                <button type="submit" class="btn btn-primary">Post Review</button>
-            </form>
+            {% for review in reviews %}
+                <div class="review-card">
+                    <p><strong>{{ review.user.username }}</strong> — {{ review.rating }}/5</p>
+                    <p>{{ review.comment }}</p>
+                    <p style="font-size: 12px; margin-top: 8px;">{{ review.created_at|date:"M d, Y" }}</p>
+                </div>
+            {% empty %}
+                <p>No reviews yet.</p>
+            {% endfor %}
         </aside>
     </section>
 </div>

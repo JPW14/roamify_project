@@ -1,14 +1,20 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from django.shortcuts import get_object_or_404
 from .models import Place
 
 def index(request):
-    places = Place.objects.all()
-    return render(request, 'roamify/index.html', {'places': places})
+    query = request.GET.get('q', '')
+    places = Place.objects.all().order_by('-created_at')
+
+    if query:
+        places = places.filter(name__icontains=query)
+
+    return render(request, 'roamify/index.html', {
+        'places': places,
+        'query': query
+    })
 
 @login_required
 def post(request):
@@ -16,11 +22,13 @@ def post(request):
         name = request.POST.get('name')
         description = request.POST.get('description')
         location = request.POST.get('location')
+        image = request.FILES.get('image')
 
         Place.objects.create(
             name=name,
             description=description,
             location=location,
+            image=image,
             created_by=request.user
         )
 
@@ -30,7 +38,7 @@ def post(request):
 
 def destination(request, place_id):
     place = get_object_or_404(Place, id=place_id)
-    reviews = place.reviews.all()
+    reviews = place.reviews.all().order_by('-created_at')
 
     return render(request, 'roamify/destination.html', {
         'place': place,
