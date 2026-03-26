@@ -7,8 +7,13 @@
     <section class="auth-card">
         <h1 class="auth-title">Create New Account</h1>
 
-        <form method="post" class="auth-form-custom">
+        <form method="post" enctype="multipart/form-data" class="auth-form-custom">
             {% csrf_token %}
+
+            <div class="auth-field">
+                <label for="display_name">Name</label>
+                <input type="text" name="display_name" id="display_name" placeholder="Enter name">
+            </div>
 
             <div class="auth-field">
                 <label for="{{ form.username.id_for_label }}">Username</label>
@@ -23,6 +28,16 @@
             <div class="auth-field">
                 <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
                 {{ form.password2 }}
+            </div>
+
+            <div class="auth-field">
+                <label for="bio">Bio</label>
+                <textarea name="bio" id="bio" class="auth-textarea" placeholder="Tell us a bit about yourself"></textarea>
+            </div>
+
+            <div class="auth-field">
+                <label for="profile_pic">Profile Picture</label>
+                <input type="file" name="profile_pic" id="profile_pic">
             </div>
 
             <button type="submit" class="auth-submit-btn">Sign Up</button>

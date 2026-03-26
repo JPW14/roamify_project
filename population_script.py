@@ -33,10 +33,22 @@ def clear_data():
     print("Old data cleared.")
 
 
-def create_user(username, password, bio=""):
+def create_user(username, password, display_name="", bio="", profile_pic_filename=None):
     user = User.objects.create_user(username=username, password=password)
 
-    profile = Profile.objects.create(user=user, bio=bio)
+    profile = Profile.objects.create(
+        user=user,
+        display_name=display_name,
+        bio=bio
+    )
+
+    if profile_pic_filename:
+        image_path = get_image_path(profile_pic_filename)
+        if os.path.exists(image_path):
+            with open(image_path, 'rb') as f:
+                profile.profile_pic.save(profile_pic_filename, File(f), save=True)
+        else:
+            print(f"Warning: profile image file not found: {image_path}")
 
     return user
 
@@ -56,7 +68,7 @@ def create_place(name, description, location, category, created_by, image_filena
             with open(image_path, 'rb') as f:
                 place.image.save(image_filename, File(f), save=True)
         else:
-            print(f"Warning: image file not found: {image_path}")
+            print(f"Warning: place image file not found: {image_path}")
 
     return place
 
@@ -83,10 +95,34 @@ def populate():
 
     clear_data()
 
-    alice = create_user("alice", "pass123", "Loves city breaks and food trips.")
-    bob = create_user("bob", "pass123", "Beach fan and sunset chaser.")
-    clara = create_user("clara", "pass123", "Nature lover and photographer.")
-    daniel = create_user("daniel", "pass123", "Enjoys landmarks and historic cities.")
+    alice = create_user(
+        "alice",
+        "pass123",
+        "Alice",
+        "Loves city breaks and food trips.",
+        "alice.jpg"
+    )
+    bob = create_user(
+        "bob",
+        "pass123",
+        "Bob",
+        "Beach fan and sunset chaser.",
+        "bob.jpg"
+    )
+    clara = create_user(
+        "clara",
+        "pass123",
+        "Clara",
+        "Nature lover and photographer.",
+        "clara.jpg"
+    )
+    daniel = create_user(
+        "daniel",
+        "pass123",
+        "Daniel",
+        "Enjoys landmarks and historic cities.",
+        "daniel.jpg"
+    )
 
     paris = create_place(
         name="Eiffel Tower",

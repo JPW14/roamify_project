@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login
+from django.contrib.auth import login, update_session_auth_hash
 from django.http import JsonResponse
 from django.db.models import Avg
-from .models import Place, Review, Comment
+from django.contrib.auth.models import User
+from .models import Place, Review, Comment, Profile
 
 
 def index(request):
@@ -63,7 +64,6 @@ def post(request):
 def destination(request, place_id):
     place = get_object_or_404(Place, id=place_id)
 
-    # increment views each time page is opened
     place.view_count += 1
     place.save(update_fields=['view_count'])
 
@@ -157,11 +157,55 @@ def destination(request, place_id):
 def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
+        display_name = request.POST.get('display_name', '')
+        bio = request.POST.get('bio', '')
+        profile_pic = request.FILES.get('profile_pic')
+
         if form.is_valid():
             user = form.save()
+            Profile.objects.create(
+                user=user,
+                display_name=display_name,
+                bio=bio,
+                profile_pic=profile_pic
+            )
             login(request, user)
             return redirect('roamify:index')
     else:
         form = UserCreationForm()
 
     return render(request, 'roamify/signup.html', {'form': form})
+
+
+@login_required
+def profile(request):
+    profile = Profile.objects.get_or_create(user=request.user)[0]
+
+    if request.method == 'POST':
+        request.user.username = request.POST.get('username', request.user.username)
+        request.user.save()
+
+        profile.display_name = request.POST.get('display_name', profile.display_name)
+        profile.bio = request.POST.get('bio', profile.bio)
+
+        if request.FILES.get('profile_pic'):
+            profile.profile_pic = request.FILES.get('profile_pic')
+
+        profile.save()
+        return redirect('roamify:profile')
+
+    return render(request, 'roamify/profile.html', {'profile': profile})
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            return redirect('roamify:profile')
+    else:
+        form = PasswordChangeForm(request.user)
+
+    return render(request, 'roamify/change_password.html', {'form': form})

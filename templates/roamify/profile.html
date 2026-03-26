@@ -1,0 +1,45 @@
+{% extends 'roamify/base.html' %}
+
+{% block title %}My Profile | Roamify{% endblock %}
+
+{% block content %}
+<div class="auth-shell">
+    <section class="auth-card">
+        <h1 class="auth-title">My Profile</h1>
+
+        {% if profile.profile_pic %}
+            <img src="{{ profile.profile_pic.url }}" alt="{{ user.username }}" class="profile-page-pic">
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" class="auth-form-custom">
+            {% csrf_token %}
+
+            <div class="auth-field">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" value="{{ user.username }}">
+            </div>
+
+            <div class="auth-field">
+                <label for="display_name">Name</label>
+                <input type="text" name="display_name" id="display_name" value="{{ profile.display_name }}">
+            </div>
+
+            <div class="auth-field">
+                <label for="bio">Bio</label>
+                <textarea name="bio" id="bio" class="auth-textarea">{{ profile.bio }}</textarea>
+            </div>
+
+            <div class="auth-field">
+                <label for="profile_pic">Profile Picture</label>
+                <input type="file" name="profile_pic" id="profile_pic">
+            </div>
+
+            <button type="submit" class="auth-submit-btn">Save Profile</button>
+        </form>
+
+        <p class="auth-footer-text">
+            <a href="{% url 'roamify:change_password' %}">Change Password</a>
+        </p>
+    </section>
+</div>
+{% endblock %}

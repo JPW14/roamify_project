@@ -4,12 +4,14 @@ from django.contrib.auth.models import User
 # User Profile
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    display_name = models.CharField(max_length=100, blank=True)
     bio = models.TextField(blank=True)
     profile_pic = models.ImageField(upload_to='profiles/', blank=True, null=True)
 
     def __str__(self):
         return self.user.username
-# Place Model
+
+
 class Place(models.Model):
     CATEGORY_CHOICES = [
         ('landmarks', 'Landmarks'),
@@ -36,7 +38,8 @@ class Place(models.Model):
 
     def __str__(self):
         return self.name
-# Review Model
+
+
 class Review(models.Model):
     place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="reviews")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -44,9 +47,13 @@ class Review(models.Model):
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('place', 'user')
+
     def __str__(self):
         return f"{self.place.name} - {self.rating}"
-# Comment Model
+
+
 class Comment(models.Model):
     place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name="comments")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
