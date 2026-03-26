@@ -11,18 +11,18 @@
             {% csrf_token %}
 
             <div class="auth-field">
-                <label for="{{ form.username.id_for_label }}">Name</label>
+                <label for="{{ form.username.id_for_label }}">Username</label>
                 {{ form.username }}
-            </div>
-
-            <div class="auth-field">
-                <label>Email</label>
-                <input type="email" placeholder="Enter Email">
             </div>
 
             <div class="auth-field">
                 <label for="{{ form.password1.id_for_label }}">Password</label>
                 {{ form.password1 }}
+            </div>
+
+            <div class="auth-field">
+                <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                {{ form.password2 }}
             </div>
 
             <button type="submit" class="auth-submit-btn">Sign Up</button>
