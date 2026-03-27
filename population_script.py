@@ -1,6 +1,5 @@
 import os
 import django
-
 from django.core.files import File
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'roamify_project.settings')
@@ -13,6 +12,14 @@ from roamify.models import Profile, Place, Review, Comment
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SAMPLE_DATA_DIR = os.path.join(BASE_DIR, 'sample_data')
 
+def clear_media_folder(folder_name):
+    folder_path = os.path.join(BASE_DIR, 'media', folder_name)
+
+    if os.path.exists(folder_path):
+        for filename in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
 
 def get_image_path(filename):
     return os.path.join(SAMPLE_DATA_DIR, filename)
@@ -29,6 +36,9 @@ def clear_data():
     User.objects.filter(username__in=[
         'alice', 'bob', 'clara', 'daniel'
     ]).delete()
+
+    clear_media_folder('places')
+    clear_media_folder('profiles')
 
     print("Old data cleared.")
 
