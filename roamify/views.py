@@ -175,7 +175,7 @@ def signup(request):
             login(request, user)
             return redirect('roamify:index')
     else:
-        form = UserCreationForm()
+        form = UserCreationForm
 
     return render(request, 'roamify/signup.html', {'form': form})
 
