@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, update_session_auth_hash
 from django.http import JsonResponse
-from django.db.models import Avg
+from django.db.models import Avg, Q
 from django.contrib.auth.models import User
 from .models import Place, Review, Comment, Profile
 
@@ -16,7 +16,7 @@ def index(request):
     places = Place.objects.all()
 
     if query:
-        places = places.filter(name__icontains=query) | Place.objects.filter(location__icontains=query)
+        places = places.filter(Q(name__icontains=query) | Q(location__icontains=query))
 
     if category != 'all':
         places = places.filter(category=category)
@@ -64,8 +64,9 @@ def post(request):
 def destination(request, place_id):
     place = get_object_or_404(Place, id=place_id)
 
-    place.view_count += 1
-    place.save(update_fields=['view_count'])
+    if request.method == 'GET':
+        place.view_count += 1
+        place.save(update_fields=['view_count'])
 
     reviews = place.reviews.all().order_by('-created_at')
     comments = place.comments.all().order_by('-created_at')
@@ -157,18 +158,20 @@ def destination(request, place_id):
 def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
-        display_name = request.POST.get('display_name', '')
-        bio = request.POST.get('bio', '')
+        display_name = request.POST.get('display_name', '').strip()
+        bio = request.POST.get('bio', '').strip()
         profile_pic = request.FILES.get('profile_pic')
 
         if form.is_valid():
             user = form.save()
-            Profile.objects.create(
-                user=user,
-                display_name=display_name,
-                bio=bio,
-                profile_pic=profile_pic
-            )
+
+            profile, created = Profile.objects.get_or_create(user=user)
+            profile.display_name = display_name
+            profile.bio = bio
+            if profile_pic:
+                profile.profile_pic = profile_pic
+            profile.save()
+
             login(request, user)
             return redirect('roamify:index')
     else:
@@ -188,24 +191,24 @@ def profile(request):
         new_bio = request.POST.get('bio', '').strip()
         new_profile_pic = request.FILES.get('profile_pic')
 
-        if new_username:
-            existing_user = User.objects.filter(username=new_username).exclude(id=request.user.id).first()
-            if existing_user:
-                error_message = "That username is already taken."
-            else:
-                request.user.username = new_username
-                request.user.save()
+        if not new_username:
+            new_username = request.user.username
 
-                profile.display_name = new_display_name
-                profile.bio = new_bio
-
-                if new_profile_pic:
-                    profile.profile_pic = new_profile_pic
-
-                profile.save()
-                return redirect('roamify:profile')
+        existing_user = User.objects.filter(username=new_username).exclude(id=request.user.id).first()
+        if existing_user:
+            error_message = "That username is already taken."
         else:
-            error_message = "Username cannot be empty."
+            request.user.username = new_username
+            request.user.save()
+
+            profile.display_name = new_display_name
+            profile.bio = new_bio
+
+            if new_profile_pic:
+                profile.profile_pic = new_profile_pic
+
+            profile.save()
+            return redirect('roamify:profile')
 
     return render(request, 'roamify/profile.html', {
         'profile': profile,

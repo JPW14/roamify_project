@@ -7,6 +7,12 @@
     <section class="auth-card">
         <h1 class="auth-title">Login To Your Account</h1>
 
+        {% if form.errors %}
+            <div class="profile-error">
+                Your username or password was incorrect. Please try again.
+            </div>
+        {% endif %}
+
         <form method="post" class="auth-form-custom">
             {% csrf_token %}
 
