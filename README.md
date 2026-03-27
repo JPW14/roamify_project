@@ -77,3 +77,8 @@ Username: daniel | Password: pass123
 - Pillow Documentation — used for image handling in Django
 - PythonAnywhere Documentation — used for deployment guidance
 - CSS-Tricks & cssportal.com— used for layout and responsive CSS reference
+
+
+## PythonAnywhere Link
+
+https://jpw14.pythonanywhere.com/
